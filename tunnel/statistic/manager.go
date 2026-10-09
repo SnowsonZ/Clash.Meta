@@ -39,6 +39,8 @@ type Manager struct {
 	proxyDownloadBlip  atomic.Int64
 	proxyUploadTotal   atomic.Int64
 	proxyDownloadTotal atomic.Int64
+	processStats       xsync.Map[string, *keyCounter]
+	hostStats          xsync.Map[string, *keyCounter]
 	pid                int32
 	memory             uint64
 }
@@ -135,6 +137,7 @@ func (m *Manager) ResetStatistic() {
 	m.proxyDownloadBlip.Store(0)
 	m.proxyDownloadTotal.Store(0)
 
+	m.resetKeyStats()
 }
 
 func (m *Manager) handle() {
